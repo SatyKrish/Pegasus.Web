@@ -12,15 +12,15 @@ Pegasus Solution is split into three projects.
 1. Pegasus.Web 
 	- Contains implementation of ASP.Net Core Web API
 	- Contains three controllers for various operations.
-		a. VehiclesController - Manage Vehicle operations
-		b. TripController - Manage Trip operations
-		c. BookingController - Manage Booking operations
+		- VehiclesController - Manage Vehicle operations
+		- TripController - Manage Trip operations
+		- BookingController - Manage Booking operations
 2. Pegasus.DataStore
 	- Contains implementation of CosmosDB data store for json documents
 	- Contains three repositories for managing documents
-		a. VehiclesRepository - Manage Vehicle document
-		b. TripRepository - Manage Trip document
-		c. BookingRepository - Manage Booking document
+		- VehiclesRepository - Manage Vehicle document
+		- TripRepository - Manage Trip document
+		- BookingRepository - Manage Booking document
 3. Pegasus.Test
 	- Contains unit tests for controllers
 
