@@ -41,7 +41,7 @@ namespace Pegasus.DataStore.Repositories
             return await tripQuery.ExecuteFirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Trip>> GetByTripDetailsAsync(string fromCity, string toCity, DateTime journeyDate)
+        public async Task<IEnumerable<Trip>> GetByTripDetailsAsync(string fromCity, string toCity, string journeyDate)
         {
             var tripQuery = this._documentClient
                 .CreateDocumentQuery<Trip>(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName))
@@ -54,6 +54,7 @@ namespace Pegasus.DataStore.Repositories
         public async Task<string> AddAsync(Trip trip)
         {
             trip.Id = Guid.NewGuid().ToString();
+            trip.Status = TripStatus.Scheduled;
             trip.LastUpdatedDate = DateTime.UtcNow;
 
             await this._documentClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName), trip);
@@ -65,7 +66,7 @@ namespace Pegasus.DataStore.Repositories
         {
             trip.LastUpdatedDate = DateTime.UtcNow;
 
-            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName), trip);
+            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DocumentDatabaseName, DocumentCollectionName, trip.Id), trip);
         }
 
         public async Task ResetAsync(Trip trip)
@@ -78,7 +79,7 @@ namespace Pegasus.DataStore.Repositories
                 seat.Status = SeatStatus.Available;
             }
 
-            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName), trip);
+            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DocumentDatabaseName, DocumentCollectionName, trip.Id), trip);
         }
 
         private async Task InitializeAsync()

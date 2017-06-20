@@ -28,7 +28,7 @@ namespace Pegasus.Test
             // Arrange
             var tripReference = StringHelper.RandomString(8);
             _mockTripRepository
-                .Setup(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+                .Setup(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(TestDataHelper.GetTripCollection(tripReference))
                 .Verifiable();
 
@@ -44,7 +44,7 @@ namespace Pegasus.Test
             Assert.IsTrue(tripResponse.Trips.Count() > 0);
             Assert.AreEqual(tripReference, tripResponse.Trips.FirstOrDefault().TripReference);
             Assert.AreEqual(TripStatus.Scheduled, tripResponse.Trips.FirstOrDefault().TripStatus.ToEnum<TripStatus>());
-            _mockTripRepository.Verify(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Once);
+            _mockTripRepository.Verify(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]
@@ -53,7 +53,7 @@ namespace Pegasus.Test
             // Arrange
             var tripReference = StringHelper.RandomString(8);
             _mockTripRepository
-                .Setup(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+                .Setup(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(default(IEnumerable<Trip>))
                 .Verifiable();
 
@@ -63,7 +63,7 @@ namespace Pegasus.Test
 
             // Assert
             Assert.IsNotNull(result as NotFoundResult);
-            _mockTripRepository.Verify(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Once);
+            _mockTripRepository.Verify(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@ namespace Pegasus.Test
             // Arrange
             var tripReference = StringHelper.RandomString(8);
             _mockTripRepository
-                .Setup(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+                .Setup(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(TestDataHelper.GetTripCollection(tripReference))
                 .Verifiable();
 
@@ -82,7 +82,7 @@ namespace Pegasus.Test
 
             // Assert
             Assert.IsNotNull(result as BadRequestObjectResult);
-            _mockTripRepository.Verify(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+            _mockTripRepository.Verify(m => m.GetByTripDetailsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [TestMethod]

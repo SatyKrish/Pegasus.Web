@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Pegasus.DataStore.Documents;
 using Pegasus.DataStore.Interfaces;
 using Pegasus.Web.Models;
+using System;
 
 namespace Pegasus.Web.Controllers
 {
@@ -26,202 +27,224 @@ namespace Pegasus.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Retrieve([FromQuery]string bookingRef)
         {
-            var booking = await this._bookingRepository.GetByBookingReferenceAsync(bookingRef);
-            if (booking == null)
+            try
             {
-                return NotFound(bookingRef);
-            }
-
-            var trip = await this._tripRepository.GetByTripReferenceAsync(booking.TripReference);
-            if (trip == null)
-            {
-                return NotFound(booking.TripReference);
-            }
-
-            var bookingResponse = new BookingResponseModel
-            {
-                BookingReference = booking.BookingReference,
-                BookingStatus = booking.Status.ToString(),
-                FromCity = trip.Details.FromCity,
-                ToCity = trip.Details.ToCity,
-                DepartureTime = trip.Details.DepartureTime,
-                ArrivalTime = trip.Details.ArrivalTime,
-                BookedSeats = trip.Seats.Select(s => new BookingResponseModel.Seat
+                var booking = await this._bookingRepository.GetByBookingReferenceAsync(bookingRef);
+                if (booking == null)
                 {
-                    SeatNumber = s.SeatNumber,
-                    SeatPosition = s.Position.ToString()
-                })
-            };
+                    return NotFound(bookingRef);
+                }
 
-            return Ok(bookingResponse);
+                var trip = await this._tripRepository.GetByTripReferenceAsync(booking.TripReference);
+                if (trip == null)
+                {
+                    return NotFound(booking.TripReference);
+                }
+
+                var bookingResponse = new BookingResponseModel
+                {
+                    BookingReference = booking.BookingReference,
+                    BookingStatus = booking.Status.ToString(),
+                    FromCity = trip.Details.FromCity,
+                    ToCity = trip.Details.ToCity,
+                    DepartureTime = trip.Details.DepartureTime,
+                    ArrivalTime = trip.Details.ArrivalTime,
+                    BookedSeats = trip.Seats.Select(s => new BookingResponseModel.Seat
+                    {
+                        SeatNumber = s.SeatNumber,
+                        SeatPosition = s.Position.ToString()
+                    })
+                };
+
+                return Ok(bookingResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{0}", ex);
+                throw;
+            }
         }
 
         // POST api/booking/initiate
         [HttpPost]
         public async Task<IActionResult> Initiate([FromBody]BookingRequestModel bookingRequest)
         {
-            var trip = await this._tripRepository.GetByTripReferenceAsync(bookingRequest.TripReference);
-            if (trip == null)
+            try
             {
-                return NotFound(bookingRequest.TripReference);
-            }
-
-            // Verify if opted seats are available for booking
-            foreach (var seat in bookingRequest.Seats)
-            {
-                if (trip.Seats.Any(s => s.SeatNumber == seat && s.Status != SeatStatus.Available))
+                var trip = await this._tripRepository.GetByTripReferenceAsync(bookingRequest.TripReference);
+                if (trip == null)
                 {
-                    const int SEAT_NOT_AVAILABLE = 1001;
-                    return StatusCode(SEAT_NOT_AVAILABLE);
+                    return NotFound(bookingRequest.TripReference);
                 }
+
+                // Verify if opted seats are available for booking
+                foreach (var seat in bookingRequest.Seats)
+                {
+                    if (trip.Seats.Any(s => s.SeatNumber == seat && s.Status != SeatStatus.Available))
+                    {
+                        return StatusCode(ErrorCodes.SEAT_NOT_AVAILABLE, nameof(ErrorCodes.SEAT_NOT_AVAILABLE));
+                    }
+                }
+
+                var booking = new Booking
+                {
+                    BookingReference = StringHelper.RandomString(6),
+                    TripReference = bookingRequest.TripReference,
+                    BookedSeats = bookingRequest.Seats.ToArray()
+                };
+
+                var bookingRef = await this._bookingRepository.AddAsync(booking);
+                return Ok(bookingRef);
             }
-
-            var booking = new Booking
+            catch (Exception ex)
             {
-                BookingReference = StringHelper.RandomString(6),
-                TripReference = bookingRequest.TripReference,
-                BookedSeats = bookingRequest.Seats.ToArray()
-            };
-
-            var bookingRef = await this._bookingRepository.AddAsync(booking);
-            return Ok(bookingRef);
+                _logger.LogError("{0}", ex);
+                throw;
+            }
         }
 
-        // POST api/booking/confirm
-        [HttpPost]
+        // PUT api/booking/confirm
+        [HttpPut]
         public async Task<IActionResult> Confirm([FromBody]string bookingRef)
         {
-            var booking = await this._bookingRepository.GetByBookingReferenceAsync(bookingRef);
-            if (booking == null)
+            try
             {
-                return NotFound(bookingRef);
-            }
-
-            // Verify booking status
-            switch (booking.Status)
-            {
-                case BookingStatus.Cancelled:
-                    {
-                        const int BOOKING_ALREADY_CANCELLED = 2001;
-                        return StatusCode(BOOKING_ALREADY_CANCELLED);
-                    }
-                case BookingStatus.Completed:
-                    {
-                        const int BOOKING_ALREADY_COMPLETED = 2002;
-                        return StatusCode(BOOKING_ALREADY_COMPLETED);
-                    }
-            }
-
-            var trip = await this._tripRepository.GetByTripReferenceAsync(booking.TripReference);
-            if (trip == null)
-            {
-                return NotFound(booking.TripReference);
-            }
-
-            // Verify trip status
-            switch (trip.Status)
-            {
-                case TripStatus.Started:
-                    {
-                        const int TRIP_ALREADY_STARTED = 2003;
-                        return StatusCode(TRIP_ALREADY_STARTED);
-                    }
-                case TripStatus.Completed:
-                    {
-                        const int TRIP_ALREADY_COMPLETED = 2004;
-                        return StatusCode(TRIP_ALREADY_COMPLETED);
-                    }
-                case TripStatus.Cancelled:
-                    {
-                        const int TRIP_ALREADY_CANCELLED = 2005;
-                        return StatusCode(TRIP_ALREADY_CANCELLED);
-                    }
-            }
-
-            await this._bookingRepository.ConfirmAsync(booking);
-
-            var bookingResponse = new BookingResponseModel
-            {
-                BookingReference = booking.BookingReference,
-                FromCity = trip.Details.FromCity,
-                ToCity = trip.Details.ToCity,
-                DepartureTime = trip.Details.DepartureTime,
-                ArrivalTime = trip.Details.ArrivalTime,
-                BookingStatus = BookingStatus.Completed.ToString(),
-                VehicleDetails = new BookingResponseModel.Vehicle
+                var booking = await this._bookingRepository.GetByBookingReferenceAsync(bookingRef);
+                if (booking == null)
                 {
-                    TrafficServiceProvider = trip.Tsp,
-                    VehicleNumber = trip.Vin,
-                    VehicleName = trip.VehicleName
+                    return NotFound(bookingRef);
                 }
-            };
-            return Ok(bookingResponse);
+
+                // Verify booking status
+                switch (booking.Status)
+                {
+                    case BookingStatus.Cancelled:
+                        {
+                            return StatusCode(ErrorCodes.BOOKING_ALREADY_CANCELLED, nameof(ErrorCodes.BOOKING_ALREADY_CANCELLED));
+                        }
+                    case BookingStatus.Completed:
+                        {
+                            return StatusCode(ErrorCodes.BOOKING_ALREADY_COMPLETED, nameof(ErrorCodes.BOOKING_ALREADY_COMPLETED));
+                        }
+                }
+
+                var trip = await this._tripRepository.GetByTripReferenceAsync(booking.TripReference);
+                if (trip == null)
+                {
+                    return NotFound(booking.TripReference);
+                }
+
+                // Verify trip status
+                switch (trip.Status)
+                {
+                    case TripStatus.Started:
+                        {
+                            return StatusCode(ErrorCodes.TRIP_ALREADY_STARTED, nameof(ErrorCodes.TRIP_ALREADY_STARTED));
+                        }
+                    case TripStatus.Completed:
+                        {
+                            return StatusCode(ErrorCodes.TRIP_ALREADY_COMPLETED, nameof(ErrorCodes.TRIP_ALREADY_COMPLETED));
+                        }
+                    case TripStatus.Cancelled:
+                        {
+                            return StatusCode(ErrorCodes.TRIP_ALREADY_CANCELLED, nameof(ErrorCodes.TRIP_ALREADY_CANCELLED));
+                        }
+                }
+
+                await this._bookingRepository.ConfirmAsync(booking);
+
+                var bookingResponse = new BookingResponseModel
+                {
+                    BookingReference = booking.BookingReference,
+                    FromCity = trip.Details.FromCity,
+                    ToCity = trip.Details.ToCity,
+                    DepartureTime = trip.Details.DepartureTime,
+                    ArrivalTime = trip.Details.ArrivalTime,
+                    BookingStatus = BookingStatus.Completed.ToString(),
+                    VehicleDetails = new BookingResponseModel.Vehicle
+                    {
+                        TrafficServiceProvider = trip.Tsp,
+                        VehicleNumber = trip.Vin,
+                        VehicleName = trip.VehicleName
+                    }
+                };
+                return Ok(bookingResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{0}", ex);
+                throw;
+            }
         }
 
-        // POST api/booking/cancel
-        [HttpDelete]
+        // PUT api/booking/cancel
+        [HttpPut]
         public async Task<IActionResult> Cancel([FromBody]string bookingRef)
         {
-            var booking = await this._bookingRepository.GetByBookingReferenceAsync(bookingRef);
-            if (booking == null)
+            try
             {
-                return NotFound(bookingRef);
-            }
+                var booking = await this._bookingRepository.GetByBookingReferenceAsync(bookingRef);
+                if (booking == null)
+                {
+                    return NotFound(bookingRef);
+                }
 
-            // Verify booking status
-            switch (booking.Status)
-            {
-                case BookingStatus.Cancelled:
-                    {
-                        const int BOOKING_ALREADY_CANCELLED = 2001;
-                        return StatusCode(BOOKING_ALREADY_CANCELLED);
-                    }
-                case BookingStatus.Completed:
-                    {
-                        const int BOOKING_CANNOT_BE_CANCELLED = 2006;
-                        return StatusCode(BOOKING_CANNOT_BE_CANCELLED);
-                    }
-            }
-            
-            var trip = await this._tripRepository.GetByTripReferenceAsync(booking.TripReference);
-            if (trip == null)
-            {
-                return NotFound(booking.TripReference);
-            }
-
-            // Verify trip status
-            switch (trip.Status)
-            {
-                case TripStatus.Started:
-                    {
-                        const int TRIP_ALREADY_STARTED = 2003;
-                        return StatusCode(TRIP_ALREADY_STARTED);
-                    }
-                case TripStatus.Completed:
-                    {
-                        const int TRIP_ALREADY_COMPLETED = 2004;
-                        return StatusCode(TRIP_ALREADY_COMPLETED);
-                    }
-                case TripStatus.Scheduled:
-                    {
-                        // Update status of cancelled seats to available
-                        foreach (var bookedSeat in booking.BookedSeats)
+                // Verify booking status
+                switch (booking.Status)
+                {
+                    case BookingStatus.Cancelled:
                         {
-                            var tripSeat = trip.Seats.FirstOrDefault(s => s.SeatNumber == bookedSeat);
-                            if (tripSeat != null)
-                            {
-                                tripSeat.Status = SeatStatus.Available;
-                            }
+                            return StatusCode(ErrorCodes.BOOKING_ALREADY_CANCELLED, nameof(ErrorCodes.BOOKING_ALREADY_CANCELLED));
                         }
+                    case BookingStatus.Completed:
+                        {
+                            return StatusCode(ErrorCodes.BOOKING_CANNOT_BE_CANCELLED, nameof(ErrorCodes.BOOKING_CANNOT_BE_CANCELLED));
+                        }
+                }
 
-                        await this._tripRepository.UpdateAsync(trip);
-                        break;
-                    }
+                var trip = await this._tripRepository.GetByTripReferenceAsync(booking.TripReference);
+                if (trip == null)
+                {
+                    return NotFound(booking.TripReference);
+                }
+
+                // Verify trip status
+                switch (trip.Status)
+                {
+                    case TripStatus.Started:
+                        {
+                            return StatusCode(ErrorCodes.TRIP_ALREADY_STARTED, nameof(ErrorCodes.TRIP_ALREADY_STARTED));
+                        }
+                    case TripStatus.Completed:
+                        {
+                            return StatusCode(ErrorCodes.TRIP_ALREADY_COMPLETED, nameof(ErrorCodes.TRIP_ALREADY_COMPLETED));
+                        }
+                    case TripStatus.Scheduled:
+                        {
+                            // Update status of cancelled seats to available
+                            foreach (var bookedSeat in booking.BookedSeats)
+                            {
+                                var tripSeat = trip.Seats.FirstOrDefault(s => s.SeatNumber == bookedSeat);
+                                if (tripSeat != null)
+                                {
+                                    tripSeat.Status = SeatStatus.Available;
+                                }
+                            }
+
+                            await this._tripRepository.UpdateAsync(trip);
+                            break;
+                        }
+                }
+
+                await this._bookingRepository.CancelAsync(booking);
+
+                return Ok();
             }
-
-            await this._bookingRepository.CancelAsync(booking);
-
-            return Ok();
+            catch (Exception ex)
+            {
+                _logger.LogError("{0}", ex);
+                throw;
+            }
         }
     }
 }

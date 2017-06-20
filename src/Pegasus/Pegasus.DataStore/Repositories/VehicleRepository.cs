@@ -52,7 +52,7 @@ namespace Pegasus.DataStore.Repositories
         {
             vehicle.LastUpdatedDate = DateTime.UtcNow;
 
-            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName), vehicle);
+            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DocumentDatabaseName, DocumentCollectionName, vehicle.Id), vehicle);
         }
 
         private async Task InitializeAsync()

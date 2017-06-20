@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Documents.Linq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace Pegasus.DataStore
             while (documentQuery.HasMoreResults)
             {
                 var documentResult = await documentQuery.ExecuteNextAsync();
-                foreach (var trip in documentResult)
+                foreach (var document in documentResult)
                 {
-                    documentList.Add(trip);
+                    documentList.Add((T)document);
                 }
             }
 
@@ -28,6 +29,11 @@ namespace Pegasus.DataStore
         {
             var documentList = await documentQuery.ExecuteToListAsync();
             return documentList.FirstOrDefault();
+        }
+
+        public static string ToJsonString(this object value)
+        {
+            return JsonConvert.SerializeObject(value);
         }
     }
 }

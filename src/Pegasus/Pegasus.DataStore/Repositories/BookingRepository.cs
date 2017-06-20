@@ -68,7 +68,7 @@ namespace Pegasus.DataStore.Repositories
             booking.Status = BookingStatus.Completed;
             booking.LastUpdatedDate = DateTime.UtcNow;
 
-            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName), booking);
+            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DocumentDatabaseName, DocumentCollectionName, booking.Id), booking);
         }
 
         public async Task CancelAsync(Booking booking)
@@ -77,7 +77,7 @@ namespace Pegasus.DataStore.Repositories
             booking.Status = BookingStatus.Cancelled;
             booking.LastUpdatedDate = DateTime.UtcNow;
 
-            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName), booking);
+            await this._documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DocumentDatabaseName, DocumentCollectionName, booking.Id), booking);
         }
 
         private async Task InitializeAsync()

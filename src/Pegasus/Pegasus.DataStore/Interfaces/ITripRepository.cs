@@ -8,7 +8,7 @@ namespace Pegasus.DataStore.Interfaces
     public interface ITripRepository
     {
         Task<Trip> GetByTripReferenceAsync(string tripReference);
-        Task<IEnumerable<Trip>> GetByTripDetailsAsync(string fromCity, string toCity, DateTime journeyDate);
+        Task<IEnumerable<Trip>> GetByTripDetailsAsync(string fromCity, string toCity, string journeyDate);
         Task<string> AddAsync(Trip trip);
         Task UpdateAsync(Trip trip);
         Task ResetAsync(Trip trip);

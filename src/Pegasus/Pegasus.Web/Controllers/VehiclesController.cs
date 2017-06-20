@@ -26,58 +26,73 @@ namespace Pegasus.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVehicleDetails([FromQuery]string vin)
         {
-            var vehicle = await this._vehicleRepository.GetByVinAsync(vin);
-            if (vehicle == null)
+            try
             {
-                return NotFound(vin);
-            }
-
-            var vehicleReponse = new VehicleModel
-            {
-                TrafficServiceProvider = vehicle.Tsp,
-                VehicleNumber = vehicle.Vin,
-                Make = vehicle.Details.Make,
-                Model = vehicle.Details.Model,
-                Year = vehicle.Details.Year,
-                Seats = vehicle.Seats.Select(s => new VehicleModel.Seat
+                var vehicle = await this._vehicleRepository.GetByVinAsync(vin);
+                if (vehicle == null)
                 {
-                    SeatNumber = s.SeatNumber,
-                    Position = s.Position.ToString()
-                })
-            };
-            return Ok(vehicleReponse);
+                    return NotFound(vin);
+                }
+
+                var vehicleReponse = new VehicleModel
+                {
+                    TrafficServiceProvider = vehicle.Tsp,
+                    VehicleNumber = vehicle.Vin,
+                    Make = vehicle.Details.Make,
+                    Model = vehicle.Details.Model,
+                    Year = vehicle.Details.Year,
+                    Seats = vehicle.Seats.Select(s => new VehicleModel.Seat
+                    {
+                        SeatNumber = s.SeatNumber,
+                        Position = s.Position.ToString()
+                    })
+                };
+                return Ok(vehicleReponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{0}", ex);
+                throw;
+            }
         }
 
         // POST api/vehicles/add
         [HttpPost]
         public async Task<IActionResult> Add([FromBody]VehicleModel vehicleRequest)
         {
-            var vehicle = await this._vehicleRepository.GetByVinAsync(vehicleRequest.VehicleNumber);
-            if (vehicle != null)
+            try
             {
-                const int VEHICLE_ALREADY_EXISTS = 1001;
-                return StatusCode(VEHICLE_ALREADY_EXISTS);
+                var vehicle = await this._vehicleRepository.GetByVinAsync(vehicleRequest.VehicleNumber);
+                if (vehicle != null)
+                {
+                    return StatusCode(ErrorCodes.VEHICLE_ALREADY_EXISTS, nameof(ErrorCodes.VEHICLE_ALREADY_EXISTS));
+                }
+
+                var newVehicle = new Vehicle
+                {
+                    Tsp = vehicleRequest.TrafficServiceProvider,
+                    Vin = vehicleRequest.VehicleNumber,
+                    Details = new VehicleDetails
+                    {
+                        Make = vehicleRequest.Make,
+                        Model = vehicleRequest.Model,
+                        Year = vehicleRequest.Year
+                    },
+                    Seats = vehicleRequest.Seats.Select(s => new Seat
+                    {
+                        SeatNumber = s.SeatNumber,
+                        Position = s.Position.ToEnum<SeatPosition>()
+                    }).ToArray()
+                };
+
+                await this._vehicleRepository.AddAsync(newVehicle);
+                return Ok();
             }
-
-            var newVehicle = new Vehicle
+            catch (Exception ex)
             {
-                Tsp = vehicleRequest.TrafficServiceProvider,
-                Vin = vehicleRequest.VehicleNumber,
-                Details = new VehicleDetails
-                {
-                    Make = vehicleRequest.Make,
-                    Model = vehicleRequest.Model,
-                    Year = vehicleRequest.Year
-                },
-                Seats = vehicleRequest.Seats.Select(s => new Seat
-                {
-                    SeatNumber = s.SeatNumber,
-                    Position = s.Position.ToEnum<SeatPosition>()               
-                }).ToArray()
-            };
-
-            await this._vehicleRepository.AddAsync(newVehicle);
-            return Ok();
+                _logger.LogError("{0}", ex);
+                throw; 
+            }
         }        
     }
 }

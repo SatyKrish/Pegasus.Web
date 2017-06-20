@@ -5,7 +5,7 @@ namespace Pegasus.DataStore.Documents
     public class Trip : DocumentBase
     {        
         public string TripReference { get; set; }
-        public DateTime JourneyDate { get; set; }
+        public string JourneyDate { get; set; }
         public TripStatus Status { get; set; }
         public TripDetails Details { get; set; }
         public string Tsp { get; set; } // Transport service provider

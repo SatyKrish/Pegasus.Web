@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Pegasus.DataStore.Documents;
+using System.Globalization;
 
 namespace Pegasus.Test
 {
@@ -31,7 +32,7 @@ namespace Pegasus.Test
                 {
                     Id = Guid.NewGuid().ToString(),
                     TripReference = tripReference,
-                    JourneyDate = DateTime.Now.Date,
+                    JourneyDate = DateTime.Now.ToString("MM-dd-yyyy", CultureInfo.InvariantCulture),
                     Status = tripStatus.Value,
                     Tsp = "Pegasus Travels",
                     Vin = "TestVin1",
@@ -57,7 +58,7 @@ namespace Pegasus.Test
                 {
                     Id = Guid.NewGuid().ToString(),
                     TripReference = tripReference,
-                    JourneyDate = DateTime.Now.Date,
+                    JourneyDate = DateTime.Now.ToString("MM-dd-yyyy", CultureInfo.InvariantCulture),
                     Status = TripStatus.Scheduled,
                     Tsp = "Pegasus Travels",
                     Vin = "TestVin1",

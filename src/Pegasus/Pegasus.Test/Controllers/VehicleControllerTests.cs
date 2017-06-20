@@ -64,7 +64,6 @@ namespace Pegasus.Test.Controllers
         public async Task VehicleController_Add_WhenVehicleExists_ShouldReturnVehicleAlreadyExistsStatusCode()
         {
             // Arrange
-            const int VEHICLE_ALREADY_EXISTS = 1001;
             var vinReference = StringHelper.RandomString(6);
             _mockVehicleRepository
                 .Setup(m => m.GetByVinAsync(It.IsAny<string>()))
@@ -103,11 +102,11 @@ namespace Pegasus.Test.Controllers
                     }
                 }
             });
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(VEHICLE_ALREADY_EXISTS, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.VEHICLE_ALREADY_EXISTS, statusCodeResult.StatusCode.Value);
             _mockVehicleRepository.Verify(m => m.GetByVinAsync(It.IsAny<string>()), Times.Once);
             _mockVehicleRepository.Verify(m => m.AddAsync(It.IsAny<Vehicle>()), Times.Never);
         }
@@ -116,7 +115,6 @@ namespace Pegasus.Test.Controllers
         public async Task VehicleController_Add_WhenVehicleDoesNotExists_ShouldReturnVehicleAlreadyExistsStatusCode()
         {
             // Arrange
-            const int VEHICLE_ALREADY_EXISTS = 1001;
             var vinReference = StringHelper.RandomString(6);
             _mockVehicleRepository
                 .Setup(m => m.GetByVinAsync(It.IsAny<string>()))

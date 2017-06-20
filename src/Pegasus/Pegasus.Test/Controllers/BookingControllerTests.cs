@@ -168,7 +168,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Initiate_WhenSeatNotAvailable_ShouldReturnSeatNotAvailableStatusCode()
         {
             // Arrange
-            const int SEAT_NOT_AVAILABLE = 1001;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -187,11 +186,11 @@ namespace Pegasus.Test.Controllers
                 TripReference = tripReference,
                 Seats = new string[] { "1", "2" }
             });
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(SEAT_NOT_AVAILABLE, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.SEAT_NOT_AVAILABLE, statusCodeResult.StatusCode.Value);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.AddAsync(It.IsAny<Booking>()), Times.Never);
         }
@@ -265,7 +264,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Confirm_WhenBookingCompleted_ShouldReturnBookingAlreadyCompletedStatusCode()
         {
             // Arrange
-            const int BOOKING_ALREADY_COMPLETED = 2002;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -284,11 +282,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Confirm(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(BOOKING_ALREADY_COMPLETED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.BOOKING_ALREADY_COMPLETED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Never);
             _mockBookingRepository.Verify(m => m.ConfirmAsync(It.IsAny<Booking>()), Times.Never);
@@ -298,7 +296,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Confirm_WhenBookingCancelled_ShouldReturnBookingAlreadyCancelledStatusCode()
         {
             // Arrange
-            const int BOOKING_ALREADY_CANCELLED = 2001;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -317,11 +314,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Confirm(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(BOOKING_ALREADY_CANCELLED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.BOOKING_ALREADY_CANCELLED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Never);
             _mockBookingRepository.Verify(m => m.ConfirmAsync(It.IsAny<Booking>()), Times.Never);
@@ -361,7 +358,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Confirm_WhenTripCancelled_ShouldReturnTripAlreadyCancelledStatusCode()
         {
             // Arrange
-            const int TRIP_ALREADY_CANCELLED = 2005;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -380,11 +376,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Confirm(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
             
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(TRIP_ALREADY_CANCELLED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.TRIP_ALREADY_CANCELLED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.ConfirmAsync(It.IsAny<Booking>()), Times.Never);
@@ -394,7 +390,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Confirm_WhenTripStarted_ShouldReturnTripAlreadyStartedStatusCode()
         {
             // Arrange
-            const int TRIP_ALREADY_STARTED = 2003;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -413,11 +408,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Confirm(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(TRIP_ALREADY_STARTED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.TRIP_ALREADY_STARTED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.ConfirmAsync(It.IsAny<Booking>()), Times.Never);
@@ -427,7 +422,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Confirm_WhenTripCompleted_ShouldReturnTripAlreadyCompletedStatusCode()
         {
             // Arrange
-            const int TRIP_ALREADY_COMPLETED = 2004;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -446,11 +440,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Confirm(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(TRIP_ALREADY_COMPLETED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.TRIP_ALREADY_COMPLETED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.ConfirmAsync(It.IsAny<Booking>()), Times.Never);
@@ -521,7 +515,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Cancel_WhenBookingCompleted_ShouldReturnBookingCannotBeCancelledStatusCode()
         {
             // Arrange
-            const int BOOKING_CANNOT_BE_CANCELLED = 2006;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -540,11 +533,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Cancel(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(BOOKING_CANNOT_BE_CANCELLED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.BOOKING_CANNOT_BE_CANCELLED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Never);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
@@ -554,7 +547,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Cancel_WhenBookingCancelled_ShouldReturnBookingAlreadyCancelledStatusCode()
         {
             // Arrange
-            const int BOOKING_ALREADY_CANCELLED = 2001;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -573,11 +565,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Cancel(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(BOOKING_ALREADY_CANCELLED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.BOOKING_ALREADY_CANCELLED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Never);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
@@ -647,7 +639,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Cancel_WhenTripStarted_ShouldReturnTripAlreadyStartedStatusCode()
         {
             // Arrange
-            const int TRIP_ALREADY_STARTED = 2003;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -666,11 +657,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Cancel(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(TRIP_ALREADY_STARTED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.TRIP_ALREADY_STARTED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
@@ -680,7 +671,6 @@ namespace Pegasus.Test.Controllers
         public async Task BookingController_Cancel_WhenTripCompleted_ShouldReturnTripAlreadyCompletedStatusCode()
         {
             // Arrange
-            const int TRIP_ALREADY_COMPLETED = 2004;
             var tripReference = StringHelper.RandomString(8);
             var bookingReference = StringHelper.RandomString(6);
             _mockTripRepository
@@ -699,11 +689,11 @@ namespace Pegasus.Test.Controllers
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
             var result = await bookingController.Cancel(bookingReference);
-            var statusCodeResult = result as StatusCodeResult;
+            var statusCodeResult = result as ObjectResult;
 
             // Assert
             Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual(TRIP_ALREADY_COMPLETED, statusCodeResult.StatusCode);
+            Assert.AreEqual(ErrorCodes.TRIP_ALREADY_COMPLETED, statusCodeResult.StatusCode.Value);
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
