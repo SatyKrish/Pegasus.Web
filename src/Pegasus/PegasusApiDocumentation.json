@@ -1,0 +1,239 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Pegasus",
+		"_postman_id": "d7ce67b7-54cf-44e4-c622-557c6183ce26",
+		"description": "Online Booking REST API Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AddVehicle",
+			"request": {
+				"url": "http://localhost:31308/api/vehicles/add",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"VehicleNumber\": \"ABCDEF123\",\n\t\"TrafficServiceProvider\": \"Pegasus Travels\",\n\t\"Make\": \"Volvo\",\n\t\"Model\": \"Transport\",\n\t\"Year\": \"2016\",\n\t\"Seats\": [\n\t\t{\n\t\t\t\"SeatNumber\": \"1\",\n\t\t\t\"Position\": \"Aisle\"\n\t\t},\n\t\t{\n\t\t\t\"SeatNumber\": \"2\",\n\t\t\t\"Position\": \"Window\"\n\t\t}\n\t]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "AddTrip",
+			"request": {
+				"url": "http://localhost:31308/api/trip/add",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"FromCity\": \"CityA\",\n\t\"ToCity\": \"CityB\",\n\t\"DepartureTime\": \"2017-06-22T10:00:00Z\",\n\t\"ArrivalTime\": \"2017-06-22T20:00:00Z\",\n\t\"VehicleNumber\": \"ABCDEF123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GetTripDetails",
+			"request": {
+				"url": {
+					"raw": "http://localhost:31308/api/trip/getTripDetails?tripReference=D30W3XTP",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31308",
+					"path": [
+						"api",
+						"trip",
+						"getTripDetails"
+					],
+					"query": [
+						{
+							"key": "tripReference",
+							"value": "D30W3XTP",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "SearchTrip",
+			"request": {
+				"url": {
+					"raw": "http://localhost:31308/api/trip/search?fromCity=CityA&toCity=CityB&travelDate=06-22-2017",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31308",
+					"path": [
+						"api",
+						"trip",
+						"search"
+					],
+					"query": [
+						{
+							"key": "fromCity",
+							"value": "CityA",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "toCity",
+							"value": "CityB",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "travelDate",
+							"value": "06-22-2017",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "InitiateBooking",
+			"request": {
+				"url": "http://localhost:31308/api/booking/initiate",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"TripReference\": \"D30W3XTP\",\n\t\"Seats\": [\n\t\t\"1\",\n\t\t\"2\"\n\t]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "RetrieveBooking",
+			"request": {
+				"url": {
+					"raw": "http://localhost:31308/api/booking/retrieve?bookingRef=ICV9F6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "31308",
+					"path": [
+						"api",
+						"booking",
+						"retrieve"
+					],
+					"query": [
+						{
+							"key": "bookingRef",
+							"value": "ICV9F6",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ConfirmBooking",
+			"request": {
+				"url": "http://localhost:31308/api/booking/confirm",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\"ICV9F6\""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "CancelBooking",
+			"request": {
+				"url": "http://localhost:31308/api/booking/cancel",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\"ICV9F6\""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ResetTrip",
+			"request": {
+				"url": "http://localhost:31308/api/trip/reset",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\"D30W3XTP\""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
