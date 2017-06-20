@@ -10,3 +10,6 @@
 /src/Pegasus/Pegasus.Test/bin/Debug
 /src/Pegasus/Pegasus.Test/obj/Debug
 /src/Pegasus/.vs/Pegasus/v15/.suo
+/src/Pegasus/Pegasus.Test/obj/Release/CoreCompileInputs.cache
+/src/Pegasus/Pegasus.DataStore/obj/Release/CoreCompileInputs.cache
+/.vs/slnx.sqlite
