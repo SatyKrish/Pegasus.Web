@@ -31,4 +31,4 @@ Pegasus Solution is split into three projects.
 
 # API Documentation
 
-Refer Src/Pegasus/PegasusApiDocumentation.json for sample requests for booking APIs.
+Refer Src/Pegasus/PegasusApiDocumentation.json for sample requests for booking APIs. This documentation is compatible with PostMan tool for API testing.
