@@ -3,3 +3,10 @@
 ################################################################################
 
 /src/Pegasus/Pegasus.DataStore/obj/Debug
+/src/Pegasus/Pegasus.DataStore/bin/Debug
+/src/Pegasus/packages
+/src/Pegasus/Pegasus.Web/bin/Debug/net452/win7-x86
+/src/Pegasus/Pegasus.Web/obj
+/src/Pegasus/Pegasus.Test/bin/Debug
+/src/Pegasus/Pegasus.Test/obj/Debug
+/src/Pegasus/.vs/Pegasus/v15/.suo

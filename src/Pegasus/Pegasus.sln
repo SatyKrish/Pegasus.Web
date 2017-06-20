@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegasus.Web", "Pegasus.Web\Pegasus.Web.csproj", "{84E475D9-6964-4EBF-8F5C-ED235DC15B4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegasus.DataStore", "Pegasus.DataStore\Pegasus.DataStore.csproj", "{266B0ABB-83F2-47C9-BF39-3A8DC64BC46A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegasus.Test", "Pegasus.Test\Pegasus.Test.csproj", "{58778986-89C5-4A10-8C59-EA82EA3DA46A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84E475D9-6964-4EBF-8F5C-ED235DC15B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84E475D9-6964-4EBF-8F5C-ED235DC15B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84E475D9-6964-4EBF-8F5C-ED235DC15B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84E475D9-6964-4EBF-8F5C-ED235DC15B4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{266B0ABB-83F2-47C9-BF39-3A8DC64BC46A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{266B0ABB-83F2-47C9-BF39-3A8DC64BC46A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{266B0ABB-83F2-47C9-BF39-3A8DC64BC46A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{266B0ABB-83F2-47C9-BF39-3A8DC64BC46A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58778986-89C5-4A10-8C59-EA82EA3DA46A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58778986-89C5-4A10-8C59-EA82EA3DA46A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58778986-89C5-4A10-8C59-EA82EA3DA46A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58778986-89C5-4A10-8C59-EA82EA3DA46A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
+	EndGlobalSection
+EndGlobal
