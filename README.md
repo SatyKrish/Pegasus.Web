@@ -1,5 +1,5 @@
 # Pegasus.Web
-Online booking API service
+Online Booking REST API Service
 
 # Technologies Used
 
@@ -28,3 +28,7 @@ Pegasus Solution is split into three projects.
 
 1. Visual Studio 2017
 2. Download and install the Azure Cosmos DB Emulator from the Microsoft Download Center. This is required to run end to end tests on local machine.
+
+# API Documentation
+
+Refer Src/Pegasus/PegasusApiDocumentation.json for sample requests for booking APIs. This documentation is compatible with PostMan tool for API testing.
