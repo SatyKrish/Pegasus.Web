@@ -4,6 +4,7 @@ Online Booking REST API Service
 # Technologies Used
 
 - REST API built using ASP.Net Core and Visual Studio 2017.
+- Azure WebJob for background processing of timedout bookings and updating seat availability status.
 - DataStore is NoSQL based documents, implemented using CosmosDB (Previously known as DocumentDB).
 
 # Implementation Details
@@ -21,7 +22,10 @@ Pegasus Solution is split into three projects.
 		- VehiclesRepository - Manage Vehicle document
 		- TripRepository - Manage Trip document
 		- BookingRepository - Manage Booking document
-3. Pegasus.Test
+3. Pegasus.WebJob 
+        - Contains implementation of background timer based job which checks for bookings which have not completed within timeout.
+	- For bookings which are timedout, seats blocked for that booking will be made available for new bookings.
+4. Pegasus.Test
 	- Contains unit tests for controllers
 
 # Prerequisites
