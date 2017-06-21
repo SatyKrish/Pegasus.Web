@@ -23,15 +23,16 @@ Pegasus Solution is split into three projects.
 		- TripRepository - Manage Trip document
 		- BookingRepository - Manage Booking document
 3. Pegasus.WebJob 
-        - Contains implementation of background timer based job which checks for bookings which have not completed within timeout.
+	- Contains implementation of timer based Azure WebJob which checks for bookings which have not completed within timeout.
 	- For bookings which are timedout, seats blocked for that booking will be made available for new bookings.
 4. Pegasus.Test
 	- Contains unit tests for controllers
 
 # Prerequisites
 
-1. Visual Studio 2017
+1. Visual Studio 2017 - Run as Administrator
 2. Download and install the Azure Cosmos DB Emulator from the Microsoft Download Center. This is required to run end to end tests on local machine.
+3. Set a local environment variable named AzureWebJobsEnv with value Development 
 
 # API Documentation
 
