@@ -13,7 +13,7 @@ namespace Pegasus.DataStore.Repositories
 {
     public class VehicleRepository : IVehicleRepository
     {
-        private const string DocumentDatabaseName = "PegasusDb";
+        private const string DocumentDatabaseName = "PegasusDB";
         private const string DocumentCollectionName = "VehicleCollection";
 
         private readonly ILogger _logger;

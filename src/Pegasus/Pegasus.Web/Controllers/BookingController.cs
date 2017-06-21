@@ -6,6 +6,7 @@ using Pegasus.DataStore.Documents;
 using Pegasus.DataStore.Interfaces;
 using Pegasus.Web.Models;
 using System;
+using System.Collections.Generic;
 
 namespace Pegasus.Web.Controllers
 {
@@ -41,6 +42,17 @@ namespace Pegasus.Web.Controllers
                     return NotFound(booking.TripReference);
                 }
 
+                // Retrieve seat information for this booking from trip
+                var bookedSeats = new List<Seat>();
+                foreach (var seat in booking.BookedSeats)
+                {
+                    var tripSeat = trip.Seats.FirstOrDefault(s => s.SeatNumber == seat);
+                    if (tripSeat != null)
+                    {
+                        bookedSeats.Add(tripSeat);
+                    }
+                }
+
                 var bookingResponse = new BookingResponseModel
                 {
                     BookingReference = booking.BookingReference,
@@ -49,11 +61,17 @@ namespace Pegasus.Web.Controllers
                     ToCity = trip.Details.ToCity,
                     DepartureTime = trip.Details.DepartureTime,
                     ArrivalTime = trip.Details.ArrivalTime,
-                    BookedSeats = trip.Seats.Select(s => new BookingResponseModel.Seat
+                    BookedSeats = bookedSeats.Select(s => new BookingResponseModel.Seat
                     {
                         SeatNumber = s.SeatNumber,
                         SeatPosition = s.Position.ToString()
-                    })
+                    }),
+                    VehicleDetails = new BookingResponseModel.Vehicle
+                    {
+                        TrafficServiceProvider = trip.Tsp,
+                        VehicleNumber = trip.Vin,
+                        VehicleName = trip.VehicleName
+                    }
                 };
 
                 return Ok(bookingResponse);
@@ -86,6 +104,7 @@ namespace Pegasus.Web.Controllers
                     }
                 }
 
+                // Initiate booking for this trip
                 var booking = new Booking
                 {
                     BookingReference = StringHelper.RandomString(6),
@@ -94,6 +113,19 @@ namespace Pegasus.Web.Controllers
                 };
 
                 var bookingRef = await this._bookingRepository.AddAsync(booking);
+
+                // Update trip seat status for this booking to blocked
+                foreach (var bookedSeat in booking.BookedSeats)
+                {
+                    var tripSeat = trip.Seats.FirstOrDefault(s => s.SeatNumber == bookedSeat);
+                    if (tripSeat != null)
+                    {
+                        tripSeat.Status = SeatStatus.Blocked;
+                    }
+                }
+
+                await this._tripRepository.UpdateAsync(trip);
+
                 return Ok(bookingRef);
             }
             catch (Exception ex)
@@ -151,8 +183,26 @@ namespace Pegasus.Web.Controllers
                         }
                 }
 
+                // Confirm booking status
                 await this._bookingRepository.ConfirmAsync(booking);
 
+                // Update trip seat status of confirmed booking to booked
+                var bookedSeats = new List<Seat>();
+                foreach (var seat in booking.BookedSeats)
+                {
+                    var tripSeat = trip.Seats.FirstOrDefault(s => s.SeatNumber == seat);
+                    if (tripSeat != null)
+                    {
+                        tripSeat.Status = SeatStatus.Booked;
+                        bookedSeats.Add(tripSeat);
+                    }
+                }
+
+                trip.LastUpdatedDate = DateTime.UtcNow;
+
+                await _tripRepository.UpdateAsync(trip);
+
+                // Return confirmed booking response
                 var bookingResponse = new BookingResponseModel
                 {
                     BookingReference = booking.BookingReference,
@@ -161,6 +211,11 @@ namespace Pegasus.Web.Controllers
                     DepartureTime = trip.Details.DepartureTime,
                     ArrivalTime = trip.Details.ArrivalTime,
                     BookingStatus = BookingStatus.Completed.ToString(),
+                    BookedSeats = bookedSeats.Select(s => new BookingResponseModel.Seat
+                    {
+                        SeatNumber = s.SeatNumber,
+                        SeatPosition = s.Position.ToString()
+                    }),
                     VehicleDetails = new BookingResponseModel.Vehicle
                     {
                         TrafficServiceProvider = trip.Tsp,
@@ -221,7 +276,7 @@ namespace Pegasus.Web.Controllers
                         }
                     case TripStatus.Scheduled:
                         {
-                            // Update status of cancelled seats to available
+                            // Update trip seat status of cancelled booking to available
                             foreach (var bookedSeat in booking.BookedSeats)
                             {
                                 var tripSeat = trip.Seats.FirstOrDefault(s => s.SeatNumber == bookedSeat);

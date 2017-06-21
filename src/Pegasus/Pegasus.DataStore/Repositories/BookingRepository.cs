@@ -14,7 +14,7 @@ namespace Pegasus.DataStore.Repositories
 {
     public class BookingRepository : IBookingRepository
     {
-        private const string DocumentDatabaseName = "PegasusDb";
+        private const string DocumentDatabaseName = "PegasusDB";
         private const string DocumentCollectionName = "BookingCollection";
 
         private readonly ILogger _logger;
@@ -55,6 +55,7 @@ namespace Pegasus.DataStore.Repositories
         {
             booking.Id = Guid.NewGuid().ToString();
             booking.Status = BookingStatus.Initiated;
+            booking.InitiatedTimeEpoch = DateTime.UtcNow.ToEpoch();
             booking.LastUpdatedDate = DateTime.UtcNow;
 
             await this._documentClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DocumentDatabaseName, DocumentCollectionName), booking);

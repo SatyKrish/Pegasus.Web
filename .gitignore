@@ -13,3 +13,5 @@
 /src/Pegasus/Pegasus.Test/obj/Release/CoreCompileInputs.cache
 /src/Pegasus/Pegasus.DataStore/obj/Release/CoreCompileInputs.cache
 /.vs/slnx.sqlite
+/src/Pegasus/Pegasus.WebJob/bin/Debug
+/src/Pegasus/Pegasus.WebJob/obj

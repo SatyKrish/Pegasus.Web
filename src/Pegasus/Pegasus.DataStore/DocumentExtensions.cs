@@ -31,9 +31,16 @@ namespace Pegasus.DataStore
             return documentList.FirstOrDefault();
         }
 
-        public static string ToJsonString(this object value)
+        public static int ToEpoch(this DateTime date)
         {
-            return JsonConvert.SerializeObject(value);
+            if (date == null)
+            {
+                return int.MinValue;
+            }
+
+            var epoch = new DateTime(1970, 1, 1);
+            var epochTimeSpan = date - epoch;
+            return (int)epochTimeSpan.TotalSeconds;
         }
     }
 }

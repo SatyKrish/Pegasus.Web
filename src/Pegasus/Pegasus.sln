@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegasus.DataStore", "Pegasu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegasus.Test", "Pegasus.Test\Pegasus.Test.csproj", "{58778986-89C5-4A10-8C59-EA82EA3DA46A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegasus.WebJob", "Pegasus.WebJob\Pegasus.WebJob.csproj", "{AFB589E4-FA41-464A-9F02-89C1AF327BCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{58778986-89C5-4A10-8C59-EA82EA3DA46A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58778986-89C5-4A10-8C59-EA82EA3DA46A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58778986-89C5-4A10-8C59-EA82EA3DA46A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFB589E4-FA41-464A-9F02-89C1AF327BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFB589E4-FA41-464A-9F02-89C1AF327BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFB589E4-FA41-464A-9F02-89C1AF327BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFB589E4-FA41-464A-9F02-89C1AF327BCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

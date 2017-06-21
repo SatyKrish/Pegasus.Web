@@ -6,6 +6,7 @@ namespace Pegasus.DataStore.Documents
     {
         public string BookingReference { get; set; }
         public BookingStatus Status { get; set; }
+        public int InitiatedTimeEpoch { get; set; }  // User for determining whether a booking timedout
         public string[] BookedSeats { get; set; }
         public string TripReference { get; set; }
     }

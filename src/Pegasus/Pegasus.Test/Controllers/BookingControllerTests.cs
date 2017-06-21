@@ -116,6 +116,10 @@ namespace Pegasus.Test.Controllers
                 .Setup(m => m.AddAsync(It.IsAny<Booking>()))
                 .ReturnsAsync(bookingReference)
                 .Verifiable();
+            _mockTripRepository
+                .Setup(m => m.UpdateAsync(It.IsAny<Trip>()))
+                .Returns(Task.FromResult<object>(null))
+                .Verifiable();
 
             // Act
             var bookingController = new BookingController(_mockTripRepository.Object, _mockBookingRepository.Object, _mockLogger.Object);
@@ -133,6 +137,7 @@ namespace Pegasus.Test.Controllers
             Assert.AreEqual(bookingReference, actualBookingReference);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.AddAsync(It.IsAny<Booking>()), Times.Once);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Once);
         }
 
         [TestMethod]
@@ -162,6 +167,7 @@ namespace Pegasus.Test.Controllers
             Assert.IsNotNull(result as NotFoundObjectResult);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.AddAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -193,6 +199,7 @@ namespace Pegasus.Test.Controllers
             Assert.AreEqual(ErrorCodes.SEAT_NOT_AVAILABLE, statusCodeResult.StatusCode.Value);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.AddAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -460,6 +467,10 @@ namespace Pegasus.Test.Controllers
                 .Setup(m => m.GetByTripReferenceAsync(It.IsAny<string>()))
                 .ReturnsAsync(TestDataHelper.GetTripCollection(tripReference).FirstOrDefault())
                 .Verifiable();
+            _mockTripRepository
+                .Setup(m => m.UpdateAsync(It.IsAny<Trip>()))
+                .Returns(Task.FromResult<object>(null))
+                .Verifiable();
             _mockBookingRepository
                 .Setup(m => m.GetByBookingReferenceAsync(It.IsAny<string>()))
                 .ReturnsAsync(TestDataHelper.GetBookingCollection(bookingReference, tripReference, BookingStatus.Initiated).FirstOrDefault())
@@ -479,6 +490,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Once);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Once);
         }
 
         [TestMethod]
@@ -509,6 +521,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Never);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -541,6 +554,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Never);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -573,6 +587,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Never);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -603,6 +618,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -633,6 +649,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Once);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -665,6 +682,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
 
         [TestMethod]
@@ -697,6 +715,7 @@ namespace Pegasus.Test.Controllers
             _mockBookingRepository.Verify(m => m.GetByBookingReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockTripRepository.Verify(m => m.GetByTripReferenceAsync(It.IsAny<string>()), Times.Once);
             _mockBookingRepository.Verify(m => m.CancelAsync(It.IsAny<Booking>()), Times.Never);
+            _mockTripRepository.Verify(m => m.UpdateAsync(It.IsAny<Trip>()), Times.Never);
         }
     }
 }

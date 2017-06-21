@@ -14,7 +14,7 @@ namespace Pegasus.DataStore.Repositories
 {
     public class TripRepository : ITripRepository
     {
-        private const string DocumentDatabaseName = "PegasusDb";
+        private const string DocumentDatabaseName = "PegasusDB";
         private const string DocumentCollectionName = "TripCollection";
 
         private readonly ILogger _logger;
