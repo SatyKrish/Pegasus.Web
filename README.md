@@ -9,7 +9,7 @@ Online Booking REST API Service
 
 # Implementation Details
 
-Pegasus Solution is split into three projects.
+Pegasus Solution is split into four projects.
 1. Pegasus.Web 
 	- Contains implementation of ASP.Net Core Web API
 	- Contains three controllers for various operations.
