@@ -25,7 +25,6 @@ namespace Pegasus.WebJob
             config.UseTimers();
 
             var host = new JobHost(config);
-            //host.Call(typeof(Functions).GetMethod("HandleBookingTimeoutAsync"));
 
             // The following code ensures that the WebJob will be running continuously
             host.RunAndBlock();
