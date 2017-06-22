@@ -78,16 +78,16 @@ namespace Pegasus.Web.Controllers
             }
         }
 
-        // GET api/trip/getTripDetails?tripReference={tripReference}
+        // GET api/trip/getTripDetails?tripRef={tripRef}
         [HttpGet]
-        public async Task<IActionResult> GetTripDetails([FromQuery]string tripReference)
+        public async Task<IActionResult> GetTripDetails([FromQuery]string tripRef)
         {
             try
             {
-                var trip = await _tripRepository.GetByTripReferenceAsync(tripReference);
+                var trip = await _tripRepository.GetByTripReferenceAsync(tripRef);
                 if (trip == null)
                 {
-                    return NotFound(tripReference);
+                    return NotFound(tripRef);
                 }
 
                 var tripResponse = new TripResponseModel
@@ -118,6 +118,72 @@ namespace Pegasus.Web.Controllers
                 };
 
                 return Ok(tripResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{0}", ex);
+                throw;
+            }
+        }
+
+        // GET api/trip/getTripBookings?tripRef={tripRef}
+        [HttpGet]
+        public async Task<IActionResult> GetTripBookings([FromQuery]string tripRef)
+        {
+            try
+            {
+                var trip = await this._tripRepository.GetByTripReferenceAsync(tripRef);
+                if (trip == null)
+                {
+                    _logger.LogError("Trip not found for {0} - {1}", nameof(tripRef), tripRef);
+                    return NotFound(tripRef);
+                }
+
+                var bookings = await this._bookingRepository.GetByTripReferenceAsync(tripRef);
+                if (bookings?.Count() == 0)
+                {
+                    _logger.LogError("Booking not found for {0} - {1}", nameof(tripRef), tripRef);
+                    return NotFound();
+                }
+
+                var bookingResponse = bookings
+                    .Where(b => b.Status != BookingStatus.Cancelled)
+                    .Select(booking =>
+                {
+                    // Retrieve seat information for this booking from trip
+                    var bookedSeats = new List<Seat>();
+                    foreach (var seat in booking.BookedSeats)
+                    {
+                        var tripSeat = trip.Seats.FirstOrDefault(s => s.SeatNumber == seat);
+                        if (tripSeat != null)
+                        {
+                            bookedSeats.Add(tripSeat);
+                        }
+                    }
+
+                    return new BookingResponseModel
+                    {
+                        BookingReference = booking.BookingReference,
+                        BookingStatus = booking.Status.ToString(),
+                        FromCity = trip.Details.FromCity,
+                        ToCity = trip.Details.ToCity,
+                        DepartureTime = trip.Details.DepartureTime,
+                        ArrivalTime = trip.Details.ArrivalTime,
+                        BookedSeats = bookedSeats.Select(s => new BookingResponseModel.Seat
+                        {
+                            SeatNumber = s.SeatNumber,
+                            SeatPosition = s.Position.ToString()
+                        }),
+                        VehicleDetails = new BookingResponseModel.Vehicle
+                        {
+                            TrafficServiceProvider = trip.Tsp,
+                            VehicleNumber = trip.Vin,
+                            VehicleName = trip.VehicleName
+                        }
+                    };
+                });
+
+                return Ok(bookingResponse);
             }
             catch (Exception ex)
             {
